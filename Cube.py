@@ -148,7 +148,7 @@ class Cube:
         :return: None
         """
         rotations = s.split()
-        reg = re.compile("^[UFDBLR]2?'?$")
+        reg = re.compile("^[UFDBLRMESXYZ]2?'?$")
         if all(reg.match(rotation) for rotation in rotations):
             # using function decorators for the face rotations
             rot_dict = {RFace.U: self.rotate_up,
@@ -156,7 +156,13 @@ class Cube:
                         RFace.D: self.rotate_down,
                         RFace.B: self.rotate_back,
                         RFace.L: self.rotate_left,
-                        RFace.R: self.rotate_right}
+                        RFace.R: self.rotate_right,
+                        RMid.M: self.rotate_middle,
+                        RMid.E: self.rotate_equatorial,
+                        RMid.S: self.rotate_standing,
+                        RAxis.X: self.rotate_X,
+                        RAxis.Y: self.rotate_Y,
+                        RAxis.Z: self.rotate_Z}
             for rotation in rotations:
                 rot = rotation[0]
                 r = 2 if '2' in rotation else 1
