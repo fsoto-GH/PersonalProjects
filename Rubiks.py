@@ -31,9 +31,9 @@ class RFace:
 
 
 class RMid:
-    S = 'standing'
-    E = 'equatorial'
-    M = 'middle'
+    S = 'S'
+    E = 'E'
+    M = 'M'
 
     middles = {S: S,
                E: E,

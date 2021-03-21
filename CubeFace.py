@@ -3,9 +3,9 @@ from Rubiks import RColor
 
 class CubeFace:
     def __init__(self, lst: list, spacing: int = 1):
-        self._face = lst
+        self.face = lst
         self.spacing = spacing
-        self.color = self._face[1][1]
+        self.color = self.face[1][1]
 
     @property
     def face(self):

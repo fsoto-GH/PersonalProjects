@@ -22,7 +22,7 @@ class StandardCube(Cube):
                           RFace.D: d,
                           RFace.B: b,
                           RFace.L: l,
-                          RFace.R: r})
+                          RFace.R: r}, spacing=1)
 
 
 class NumberedCube(Cube):
@@ -45,5 +45,5 @@ class NumberedCube(Cube):
                           RFace.L: l,
                           RFace.R: r}, spacing=2)
 
-    def print_cube(self, spacing=2):
-        super().print_cube(spacing)
+    def print_cube(self):
+        super().print_cube()
