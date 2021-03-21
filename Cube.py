@@ -307,23 +307,3 @@ class Cube:
 
         self._spacing = s
 
-
-def rotate_side(side: CubeFace, r: int) -> CubeFace:
-    """
-    This helper-method performs a face rotation for the given side.
-    For a rotation [-2, 2], where |r|=1 is 90 and |r|=2 is 180.
-
-    :param side: to rotate from
-    :param r: how many 90 deg. (-) => counter
-    :return: None
-    """
-    if r < -2 or r > 2:
-        raise ValueError("Rotations must be between -2 and 2.")
-
-    side = [row.copy() for row in side.face]
-    if r % 2 == 0:
-        return CubeFace([row[::-1] for row in side[::-1]])
-    elif r == 1:
-        return CubeFace(list(zip(*side[::-1])))
-    elif r == -1:
-        return CubeFace(list(zip(*side))[::-1])
