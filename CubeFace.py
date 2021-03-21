@@ -10,7 +10,7 @@ class CubeFace:
         self.color = self.face[1][1]
 
     @property
-    def face(self) -> List[List[(str, int)]]:
+    def face(self) -> List[list]:
         return self._face
 
     @face.setter
@@ -26,7 +26,9 @@ class CubeFace:
             self._face = [[lst[i] for i in range(j, j + 3)] for j in range(0, 9, 3)]
             self.color = lst[4]
         elif len(lst) == 3 and len(set(map(len, lst))) == 1:
-            self._face = lst
+            self._face = [list(i) for i in lst]
+            # the line below will fix tuple value error, but above works so far
+            # self._face = [[lst[i][j] for j in range(0, 3)] for i in range(0, 3)]
             self.color = lst[1][1]
         else:
             raise ValueError("Expected a list size 9 or 2d 3x3 list.")
@@ -39,7 +41,7 @@ class CubeFace:
     def color(self, v):
         self._color = v
 
-    def row(self, row: int, r: bool = False) -> List[(str, int)]:
+    def row(self, row: int, r: bool = False) -> list:
         return self.face[row][::-1] if r else self.face[row][:]
 
     def row_set(self, row, n_row):
