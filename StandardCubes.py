@@ -26,6 +26,10 @@ class StandardCube(Cube):
 
 
 class NumberedCube(Cube):
+    """
+    This is a standard, solved cube numbered 1-54.
+    The order of numbers goes across from U-F-D-B-L-R.
+    """
     def __init__(self):
         u = CubeFace([i for i in range(1, 10)])
         f = CubeFace([i for i in range(10, 19)])

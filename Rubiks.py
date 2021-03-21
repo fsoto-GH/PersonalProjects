@@ -32,7 +32,7 @@ class RFace:
 
 class RMid:
     S = 'standing'
-    E = 'equatiorial'
+    E = 'equatorial'
     M = 'middle'
 
     middles = {S: S,
@@ -41,9 +41,9 @@ class RMid:
 
 
 class RAxis:
-    X = 'x'
-    Y = 'y'
-    Z = 'z'
+    X = 'X'
+    Y = 'Y'
+    Z = 'Z'
 
     axis = {X: X,
             Y: Y,

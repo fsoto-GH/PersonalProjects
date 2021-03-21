@@ -1,6 +1,7 @@
 import re
 from queue import Queue
 from typing import Dict
+
 from CubeFace import CubeFace
 from Rubiks import RFace, RMid, RAxis
 

@@ -2,10 +2,10 @@ from Rubiks import RColor
 
 
 class CubeFace:
-    def __init__(self, center_color: RColor, lst: list, spacing: int = 1):
+    def __init__(self, lst: list, spacing: int = 1):
         self._face = lst
         self.spacing = spacing
-        self.color = center_color
+        self.color = self._face[1][1]
 
     @property
     def face(self):
