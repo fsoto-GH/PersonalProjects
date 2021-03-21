@@ -1,6 +1,7 @@
 import re
 from queue import Queue
 from typing import Dict
+
 from CubeFace import CubeFace
 from Rubiks import RFace, RMid, RAxis
 
@@ -128,7 +129,7 @@ class Cube:
 
         return "".join(res)
 
-    def _rotate_mid(self, mid, r:int = 1) -> None:
+    def _rotate_mid(self, mid, r: int = 1) -> None:
         """
         This (private) method rotates the middle layer.
 

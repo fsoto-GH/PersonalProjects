@@ -1,4 +1,15 @@
+"""
+This contains common Rubik's terms.
+This is used to facilitate and maintain concurrency across
+classes.
+"""
+
+
 class RColor:
+    """
+    This class contains the 6 standard colors of a Rubik's cube.
+    There is also a dictionary for quick exception handling.
+    """
     R = 'R'
     G = 'G'
     B = 'B'
@@ -15,6 +26,10 @@ class RColor:
 
 
 class RFace:
+    """
+    This class contains the 6 standard faces of a Rubik's cube.
+    There is also a dictionary for quick exception handling.
+    """
     U = 'U'
     F = 'F'
     D = 'D'
@@ -31,6 +46,10 @@ class RFace:
 
 
 class RMid:
+    """
+    This class contains the 3 standard middle rotations of a Rubik's cube.
+    There is also a dictionary for quick exception handling.
+    """
     S = 'S'
     E = 'E'
     M = 'M'
@@ -41,6 +60,10 @@ class RMid:
 
 
 class RAxis:
+    """
+    This class contains the 3 standard rotations of a Rubik's cube.
+    There is also a dictionary for quick exception handling.
+    """
     X = 'X'
     Y = 'Y'
     Z = 'Z'

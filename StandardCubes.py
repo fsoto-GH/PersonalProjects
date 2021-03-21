@@ -44,6 +44,3 @@ class NumberedCube(Cube):
                           RFace.B: b,
                           RFace.L: l,
                           RFace.R: r}, spacing=2)
-
-    def print_cube(self):
-        super().print_cube()
