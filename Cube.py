@@ -1,13 +1,13 @@
 import re
 from queue import Queue
-from typing import Dict
+from typing import Dict, Union
 
 from CubeFace import CubeFace
 from Rubiks import RFace, RMid, RAxis
 
 
 class Cube:
-    def __init__(self, faces: Dict[RFace, CubeFace], spacing: int = -1):
+    def __init__(self, faces: Dict[Union[RFace, str], CubeFace], spacing: int = -1):
         if len(faces) != 6:
             raise ValueError("A valid cube requires 6 sides.")
         self.faces = faces
@@ -46,7 +46,16 @@ class Cube:
     def rotate_standing(self, r: int = 1) -> None:
         self._rotate_mid(RMid.S, r)
 
-    def print_cube(self):
+    def rotate_X(self, r: int = 1) -> None:
+        self._orientate_axis(RAxis.X, r)
+
+    def rotate_Y(self, r: int = 1) -> None:
+        self._orientate_axis(RAxis.Y, r)
+
+    def rotate_Z(self, r: int = 1) -> None:
+        self._orientate_axis(RAxis.Z, r)
+
+    def print_cube(self) -> None:
         """
         This method prints the entire cube's net drawing, where
         the intersection represents the front face.
@@ -129,6 +138,31 @@ class Cube:
 
         return "".join(res)
 
+    def parseRotations(self, s: str) -> None:
+        """
+        This performs the transformations from a
+        space-separated list of rotations. This interprets standard
+        Rubik's notation.
+
+        :param s: space-separated values
+        :return: None
+        """
+        rotations = s.split()
+        reg = re.compile("^[UFDBLR]2?'?$")
+        if all(reg.match(rotation) for rotation in rotations):
+            # using function decorators for the face rotations
+            rot_dict = {RFace.U: self.rotate_up,
+                        RFace.F: self.rotate_front,
+                        RFace.D: self.rotate_down,
+                        RFace.B: self.rotate_back,
+                        RFace.L: self.rotate_left,
+                        RFace.R: self.rotate_right}
+            for rotation in rotations:
+                rot = rotation[0]
+                r = 2 if '2' in rotation else 1
+                r *= -1 if "'" in rotation else 1
+                rot_dict[rot](r)
+
     def _rotate_mid(self, mid, r: int = 1) -> None:
         """
         This (private) method rotates the middle layer.
@@ -139,7 +173,7 @@ class Cube:
         """
         self._rotate_layer(mid, r, c=1)
 
-    def _rotate_layer(self, diagonal: RMid, r: int = 1, c: int = 1) -> None:
+    def _rotate_layer(self, diagonal: Union[RMid, str], r: int = 1, c: int = 1) -> None:
         """
         This (private) method rotates a Rubik's layer from the perspective of
         the front. By default, the middle layer is rotated; however, the
@@ -152,11 +186,8 @@ class Cube:
         """
         if diagonal not in RMid.middles:
             raise ValueError(f"{diagonal} not valid.")
-        elif r < -2 or r > 2:
-            raise ValueError("Rotations must be between -2 and 2.")
-
-        if not r:
-            return
+        elif abs(r) != 1 and abs(r) != 2:
+            raise ValueError("Rotation, r, must be |r| = [1, 2]")
 
         if r < 0:
             r += 4
@@ -209,9 +240,15 @@ class Cube:
             self.faces[RFace.R].col_set(2 - c, n_r)
             self.faces[RFace.U].row_set(c, n_u)
 
-    def _rotate_face(self, side: RFace, r: int = 1) -> None:
-        if r < -2 or r > 2:
-            raise ValueError("Rotations must be between -2 and 2.")
+    def _rotate_face(self, side: Union[RFace, str], r: int = 1) -> None:
+        """
+        This method rotates a face by a given amount |r| = [1, 2]
+        :param side:
+        :param r:
+        :return:
+        """
+        if abs(r) != 1 and abs(r) != 2:
+            raise ValueError("Rotation, r, must be |r| = [1, 2]")
 
         side = self.faces[side]
 
@@ -222,16 +259,16 @@ class Cube:
         else:
             side.face = [row[::-1] for row in side.face[::-1]]
 
-    def orientate(self, axis: RAxis, r: int = 1) -> None:
+    def _orientate_axis(self, axis: RAxis, r: int = 1) -> None:
         """
-        This method takes an axis (X, Y, Z) and rotates it.
+        This (private) method takes an axis (X, Y, Z) and rotates it.
 
         :param axis: what axis to rotate from
-        :param r: how many 90 deg.
+        :param r: how many 90 deg |r| = [1, 2]
         :return: None
         """
-        if r < -2 or r > 2:
-            raise ValueError("Rotations must be between -2 and 2.")
+        if abs(r) != 1 and abs(r) != 2:
+            raise ValueError("Rotation, r, must be |r| = [1, 2]")
         elif axis not in RAxis.axis:
             raise ValueError(f"{axis} is not a valid axis.")
 
@@ -248,37 +285,12 @@ class Cube:
             self._rotate_mid(RMid.S, r=r)
             self.rotate_back(r=-r)
 
-    def parseRotations(self, s: str) -> None:
-        """
-        This performs the transformations from a
-        space-separated list of rotations. This interprets standard
-        Rubik's notation.
-
-        :param s: space-separated values
-        :return: None
-        """
-        rotations = s.split()
-        reg = re.compile("^[UFDBLR]2?'?$")
-        if all(reg.match(rotation) for rotation in rotations):
-            # using function decorators for the face rotations
-            rot_dict = {RFace.U: self.rotate_up,
-                        RFace.F: self.rotate_front,
-                        RFace.D: self.rotate_down,
-                        RFace.B: self.rotate_back,
-                        RFace.L: self.rotate_left,
-                        RFace.R: self.rotate_right}
-            for rotation in rotations:
-                rot = rotation[0]
-                r = 2 if '2' in rotation else 1
-                r *= -1 if "'" in rotation else 1
-                rot_dict[rot](r)
-
     @property
-    def faces(self) -> Dict[RFace, CubeFace]:
+    def faces(self) -> Dict[Union[RFace, str], CubeFace]:
         return self._faces
 
     @faces.setter
-    def faces(self, faces: Dict[RFace, CubeFace]) -> None:
+    def faces(self, faces: Dict[Union[RFace, str], CubeFace]) -> None:
         self._faces = faces
 
     @property
@@ -306,4 +318,3 @@ class Cube:
             self.faces[face].spacing = s
 
         self._spacing = s
-

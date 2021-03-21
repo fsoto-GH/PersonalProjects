@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union, Dict
 
 from Rubiks import RColor
 
@@ -34,7 +34,7 @@ class CubeFace:
             raise ValueError("Expected a list size 9 or 2d 3x3 list.")
 
     @property
-    def color(self):
+    def color(self) -> Union[RColor, str]:
         return self._color
 
     @color.setter
@@ -53,7 +53,7 @@ class CubeFace:
         for i in range(3):
             self.face[row][i] = n_row[i]
 
-    def col(self, col, r=False):
+    def col(self, col, r=False) -> list:
         """
         :param col: int [0, 2]
         :param r: boolean indicating if reversed
@@ -65,7 +65,7 @@ class CubeFace:
         for i in range(3):
             self.face[i][col] = n_col[i]
 
-    def color_count(self) -> dict:
+    def color_count(self) -> Dict[Union[RColor, str], int]:
         """
         This returns a dictionary containing the count
         of colors in the face.
@@ -82,7 +82,7 @@ class CubeFace:
         return color_count
 
     @property
-    def spacing(self):
+    def spacing(self) -> int:
         return self._spacing
 
     @spacing.setter

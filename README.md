@@ -1,5 +1,5 @@
 # Rubiks
-<p>This repository contains my shot at a mechanical Rubik's cube solver.</p>
+<p>This repository contains my shot at a mechanical 3x3 Rubik's cube solver.</p>
 
 <p>This contains the following classes:</p>
 <ul>
