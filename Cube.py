@@ -5,6 +5,7 @@ from CubeFace import CubeFace
 from Rubiks import RFace, RMid, RAxis
 
 
+
 class Cube:
     def __init__(self, faces: Dict[str: CubeFace], spacing=1):
         if len(faces) != 6:
