@@ -23,7 +23,7 @@ class CubeFace:
         :return: None
         """
         if len(lst) == 9:
-            self._face = [[lst[i] for i in range(j, j + 3)] for j in range(0, 9, 3)]
+            self._face = [lst[:3], lst[3:6], lst[6:]]
             self.color = lst[4]
         elif len(lst) == 3 and len(set(map(len, lst))) == 1:
             self._face = [list(i) for i in lst]
@@ -42,6 +42,11 @@ class CubeFace:
         self._color = v
 
     def row(self, row: int, r: bool = False) -> list:
+        """
+        :param row: int [0, 2]
+        :param r: boolean indicating if reversed
+        :return: list containing a copy of the row
+        """
         return self.face[row][::-1] if r else self.face[row][:]
 
     def row_set(self, row, n_row):
@@ -49,6 +54,11 @@ class CubeFace:
             self.face[row][i] = n_row[i]
 
     def col(self, col, r=False):
+        """
+        :param col: int [0, 2]
+        :param r: boolean indicating if reversed
+        :return: list containing a copy of the col
+        """
         return [self.face[2 - i if r else i][col] for i in range(3)]
 
     def col_set(self, col, n_col):
@@ -56,15 +66,20 @@ class CubeFace:
             self.face[i][col] = n_col[i]
 
     def color_count(self) -> dict:
-        colors = {}
-        for color in RColor.colors:
-            colors[color] = 0
+        """
+        This returns a dictionary containing the count
+        of colors in the face.
 
-        for row in self.face:
-            for cell in row:
-                colors[cell] += 1
+        :return: color count dictionary
+        """
+        color_count = {}
+        for color in sum(self.face, []):
+            if color in color_count:
+                color_count[color] += 1
+            else:
+                color_count[color] = 1
 
-        return colors
+        return color_count
 
     @property
     def spacing(self):

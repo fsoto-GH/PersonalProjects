@@ -14,27 +14,27 @@ class Cube:
         self.spacing = spacing
 
     def rotate_up(self, r: int = 1) -> None:
-        self.faces[RFace.U] = rotate_side(self.faces[RFace.U], r)
+        self._rotate_face(RFace.U, r)
         self._rotate_layer(RMid.E, r, c=0)
 
     def rotate_down(self, r: int = 1) -> None:
-        self.faces[RFace.D] = rotate_side(self.faces[RFace.D], r)
+        self._rotate_face(RFace.D, r)
         self._rotate_layer(RMid.E, -r, c=2)
 
     def rotate_front(self, r: int = 1) -> None:
-        self.faces[RFace.F] = rotate_side(self.faces[RFace.F], r)
+        self._rotate_face(RFace.F, r)
         self._rotate_layer(RMid.S, r, c=2)
 
     def rotate_back(self, r: int = 1) -> None:
-        self.faces[RFace.B] = rotate_side(self.faces[RFace.B], r)
+        self._rotate_face(RFace.B, r)
         self._rotate_layer(RMid.S, -r, c=0)
 
     def rotate_left(self, r: int = 1) -> None:
-        self.faces[RFace.L] = rotate_side(self.faces[RFace.L], r)
+        self._rotate_face(RFace.L, r)
         self._rotate_layer(RMid.M, -r, c=0)
 
     def rotate_right(self, r: int = 1) -> None:
-        self.faces[RFace.R] = rotate_side(self.faces[RFace.R], r)
+        self._rotate_face(RFace.R, r)
         self._rotate_layer(RMid.M, r, c=2)
 
     def rotate_middle(self, r: int = 1) -> None:
@@ -209,6 +209,19 @@ class Cube:
             self.faces[RFace.R].col_set(2 - c, n_r)
             self.faces[RFace.U].row_set(c, n_u)
 
+    def _rotate_face(self, side: RFace, r: int = 1) -> None:
+        if r < -2 or r > 2:
+            raise ValueError("Rotations must be between -2 and 2.")
+
+        side = self.faces[side]
+
+        if r == 1:
+            side.face = list(zip(*side.face[::-1]))
+        elif r == -1:
+            side.face = list(zip(*side.face))[::-1]
+        else:
+            side.face = [row[::-1] for row in side.face[::-1]]
+
     def orientate(self, axis: RAxis, r: int = 1) -> None:
         """
         This method takes an axis (X, Y, Z) and rotates it.
@@ -286,8 +299,8 @@ class Cube:
             s = 1
             for face in self.faces:
                 for cell in self.faces[face].face:
-                    s = s if s > len(str(cell)) else s
-            print(s)
+                    n_s = len(str(cell))
+                    s = s if s > n_s else n_s
 
         for face in self.faces:
             self.faces[face].spacing = s
