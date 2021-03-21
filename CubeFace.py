@@ -14,7 +14,7 @@ class CubeFace:
         return self._face
 
     @face.setter
-    def face(self, lst: list) -> None:
+    def face(self, lst: Union[List[List], list]) -> None:
         """
         This method takes a size 9 list or 2d 3x3 list and assigns it to
         represent the face. This also sets the color (center 'sticker').
@@ -53,6 +53,9 @@ class CubeFace:
         for i in range(3):
             self.face[row][i] = n_row[i]
 
+        if row == 1:
+            self.color = self.face[1][1]
+
     def col(self, col, r=False) -> list:
         """
         :param col: int [0, 2]
@@ -64,6 +67,8 @@ class CubeFace:
     def col_set(self, col, n_col):
         for i in range(3):
             self.face[i][col] = n_col[i]
+        if col == 1:
+            self.color = self.face[1][1]
 
     def color_count(self) -> Dict[Union[RColor, str], int]:
         """

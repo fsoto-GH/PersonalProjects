@@ -24,6 +24,13 @@ class RColor:
               Y: Y,
               O: O}
 
+    complements = {R: O,
+                   O: R,
+                   G: B,
+                   B: G,
+                   W: Y,
+                   Y: W}
+
 
 class RFace:
     """

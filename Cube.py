@@ -3,7 +3,7 @@ from queue import Queue
 from typing import Dict, Union
 
 from CubeFace import CubeFace
-from Rubiks import RFace, RMid, RAxis
+from Rubiks import RFace, RMid, RAxis, RColor
 
 
 class Cube:
@@ -169,6 +169,21 @@ class Cube:
                 r *= -1 if "'" in rotation else 1
                 rot_dict[rot](r)
 
+    def orientate(self, up: Union[RColor, str], front: Union[RColor, str]) -> None:
+        up_comp = RColor.complements[up]
+        front_comp = RColor.complements[front]
+
+    def find_face(self, color: Union[RColor, str]) -> Union[RFace, str]:
+        """
+        This method returns the face orientation of a given color.
+
+        :param color: center color to look for
+        :return: None
+        """
+        for face in self.faces:
+            if self.faces[face].color == color:
+                return face
+
     def _rotate_mid(self, mid, r: int = 1) -> None:
         """
         This (private) method rotates the middle layer.
@@ -248,7 +263,7 @@ class Cube:
 
     def _rotate_face(self, side: Union[RFace, str], r: int = 1) -> None:
         """
-        This method rotates a face by a given amount |r| = [1, 2]
+        This (private) method rotates a face by a given amount |r| = [1, 2]
         :param side:
         :param r:
         :return:
