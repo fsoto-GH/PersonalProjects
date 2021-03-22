@@ -31,11 +31,11 @@ class Cube:
 
     def rotate_left(self, r: int = 1) -> None:
         self._rotate_face(RFace.L, r)
-        self._rotate_layer(RMid.M, -r, c=0)
+        self._rotate_layer(RMid.M, r, c=0)
 
     def rotate_right(self, r: int = 1) -> None:
         self._rotate_face(RFace.R, r)
-        self._rotate_layer(RMid.M, r, c=2)
+        self._rotate_layer(RMid.M, -r, c=2)
 
     def rotate_middle(self, r: int = 1) -> None:
         self._rotate_mid(RMid.M, r)
@@ -73,10 +73,11 @@ class Cube:
         middle_faces.put(self.faces[RFace.L])
         middle_faces.put(self.faces[RFace.F])
         middle_faces.put(self.faces[RFace.R])
+        middle_faces.put(self.faces[RFace.B])
 
         # left, front, and right faces
         for i in range(n):
-            for face_row in range(n):
+            for face_row in range(4):
                 curr = middle_faces.get()
                 middle_faces.put(curr)
                 for face in curr.row(i):
@@ -91,10 +92,10 @@ class Cube:
             print(" ".join(f'{j:>{self.spacing}}' for j in self.faces[RFace.D].row(i)))
         print()
 
-        # back face
-        for i in range(n):
-            print(f'{" " * (n * self.spacing + 2)}  ', end="")
-            print(" ".join(f'{j:>{self.spacing}}' for j in self.faces[RFace.B].row(i)))
+        # # back face
+        # for i in range(n):
+        #     print(f'{" " * (n * self.spacing + 2)}  ', end="")
+        #     print(" ".join(f'{j:>{self.spacing}}' for j in self.faces[RFace.B].row(i)))
 
     def __str__(self):
         res = []
@@ -254,36 +255,36 @@ class Cube:
             r += 4
 
         if diagonal == RMid.M:
-            n_u = self.faces[RFace.F].col(c)
-            n_f = self.faces[RFace.D].col(c)
-            n_d = self.faces[RFace.B].col(c)
-            n_b = self.faces[RFace.U].col(c)
+            n_u = self.faces[RFace.B].col(2 - c, r=True)
+            n_b = self.faces[RFace.D].col(c, r=True)
+            n_d = self.faces[RFace.F].col(c)
+            n_f = self.faces[RFace.U].col(c)
             r -= 1
 
             while r:
-                n_u, n_f, n_d, n_b = n_f, n_d, n_b, n_u
+                n_u, n_b, n_d, n_f = n_b[::-1], n_d[::-1], n_f, n_u
                 r -= 1
 
-            self.faces[RFace.F].col_set(c, n_f)
+            self.faces[RFace.B].col_set(2 - c, n_b)
             self.faces[RFace.D].col_set(c, n_d)
-            self.faces[RFace.B].col_set(c, n_b)
+            self.faces[RFace.F].col_set(c, n_f)
             self.faces[RFace.U].col_set(c, n_u)
 
         elif diagonal == RMid.E:
-            n_b = self.faces[RFace.L].row(c, r=True)
+            n_b = self.faces[RFace.L].row(c)
             n_l = self.faces[RFace.F].row(c)
             n_f = self.faces[RFace.R].row(c)
-            n_r = self.faces[RFace.B].row(2 - c, r=True)
+            n_r = self.faces[RFace.B].row(c)
             r -= 1
 
             while r:
-                n_b, n_l, n_f, n_r = n_l[::-1], n_f, n_r, n_b[::-1]
+                n_b, n_l, n_f, n_r = n_l, n_f, n_r, n_b
                 r -= 1
 
             self.faces[RFace.L].row_set(c, n_l)
             self.faces[RFace.F].row_set(c, n_f)
             self.faces[RFace.R].row_set(c, n_r)
-            self.faces[RFace.B].row_set(2 - c, n_b)
+            self.faces[RFace.B].row_set(c, n_b)
 
         elif diagonal == RMid.S:
             n_u = self.faces[RFace.L].col(c, r=True)

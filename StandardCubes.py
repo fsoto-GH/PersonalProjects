@@ -33,11 +33,11 @@ class NumberedCube(Cube):
 
     def __init__(self):
         u = CubeFace([i for i in range(1, 10)])
-        f = CubeFace([i for i in range(10, 19)])
-        d = CubeFace([i for i in range(19, 28)])
-        b = CubeFace([i for i in range(28, 37)])
-        l = CubeFace([i for i in range(37, 46)])
-        r = CubeFace([i for i in range(46, 55)])
+        l = CubeFace([i for i in range(10, 19)])
+        f = CubeFace([i for i in range(19, 28)])
+        r = CubeFace([i for i in range(28, 37)])
+        b = CubeFace([i for i in range(37, 46)])
+        d = CubeFace([i for i in range(46, 55)])
 
         super().__init__({RFace.U: u,
                           RFace.F: f,
