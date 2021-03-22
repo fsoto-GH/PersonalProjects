@@ -111,15 +111,16 @@ class Cube:
         middle_faces.put(self.faces[RFace.L])
         middle_faces.put(self.faces[RFace.F])
         middle_faces.put(self.faces[RFace.R])
+        middle_faces.put(self.faces[RFace.B])
 
         # left, front, and right faces
         for i in range(n):
-            for face_row in range(n):
+            for face in range(4):
                 curr = middle_faces.get()
                 middle_faces.put(curr)
-                for face in curr.row(i):
-                    res.append(face + " ")
-                res.append(" ")
+                for j, cell in enumerate(curr.row(i)):
+                    res.append(cell + (" " if face * 3 + j != 11 else ""))
+                res.append(" " if face != 3 else "")
             res.append("\n")
         res.append("\n")
 
@@ -127,15 +128,8 @@ class Cube:
         for i in range(n):
             res.append(f'{" " * 6} ')
             res.append(" ".join(str(j) for j in self.faces[RFace.D].row(i)))
-            res.append('\n')
-        res.append('\n')
-
-        # back face
-        for i in range(n):
-            res.append(f'{" " * 6} ')
-            res.append(" ".join(str(j) for j in self.faces[RFace.B].row(i)))
-            res.append('\n')
-        res.append('\n')
+            res.append('\n' if i != n - 1 else "")
+        res.append('\n' if i != n - 1 else "")
 
         return "".join(res)
 
@@ -199,11 +193,30 @@ class Cube:
                     n_r = self.faces[self.find_face(RColor.Y)].face
                     n_l = self.faces[self.find_face(RColor.W)].face
             else:
-                # find the right side using the ring
-                l = self.find_face(ring[up]) if up in ring else self.find_face(ring[front])
-                n_r = self.faces[l].face
-                r = self.find_face(RColor.complements[self.faces[l].color])
-                n_l = self.faces[r].face
+                # whether the ring is upside or downside
+                if up in ring:
+                    if front == RColor.W:
+                        l = self.find_face(ring[up])
+                        n_l = self.faces[l].face
+                        r = self.find_face(RColor.complements[self.faces[l].color])
+                        n_r = self.faces[r].face
+                    else:
+                        r = self.find_face(ring[up])
+                        n_r = self.faces[r].face
+                        l = self.find_face(RColor.complements[self.faces[r].color])
+                        n_l = self.faces[l].face
+                else:
+                    if up == RColor.W:
+                        r = self.find_face(ring[front])
+                        n_r = self.faces[r].face
+                        l = self.find_face(RColor.complements[self.faces[r].color])
+                        n_l = self.faces[l].face
+                    else:
+                        l = self.find_face(ring[front])
+                        n_l = self.faces[l].face
+                        r = self.find_face(RColor.complements[self.faces[l].color])
+                        n_r = self.faces[r].face
+
         except KeyError as ke:
             raise KeyError("Not a valid cube!") from ke
 
