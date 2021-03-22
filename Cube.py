@@ -170,8 +170,48 @@ class Cube:
                 rot_dict[rot](r)
 
     def orientate(self, up: Union[RColor, str], front: Union[RColor, str]) -> None:
-        up_comp = RColor.complements[up]
-        front_comp = RColor.complements[front]
+        """
+        This method reorientates the perspective faces.
+
+        :param up: face color to be up face
+        :param front: face color to be the front face
+        :return: None
+        """
+        ring = {RColor.R: RColor.B,
+                RColor.B: RColor.O,
+                RColor.O: RColor.G,
+                RColor.G: RColor.R}
+
+        # find the faces and mark
+        n_u = self.faces[self.find_face(up)].face
+        n_f = self.faces[self.find_face(front)].face
+        n_d = self.faces[self.find_face(RColor.complements[up])].face
+        n_b = self.faces[self.find_face(RColor.complements[front])].face
+
+        try:
+            if up in ring and front in ring:
+                # considers edge case where ring composes the up and front
+                if ring[up] == front:
+                    n_r = self.faces[self.find_face(RColor.W)].face
+                    n_l = self.faces[self.find_face(RColor.Y)].face
+                else:
+                    n_r = self.faces[self.find_face(RColor.Y)].face
+                    n_l = self.faces[self.find_face(RColor.W)].face
+            else:
+                # find the right side using the ring
+                l = self.find_face(ring[up]) if up in ring else self.find_face(ring[front])
+                n_r = self.faces[l].face
+                r = self.find_face(RColor.complements[self.faces[l].color])
+                n_l = self.faces[r].face
+        except KeyError as ke:
+            raise KeyError("Not a valid cube!") from ke
+
+        self.faces[RFace.U].face = n_u
+        self.faces[RFace.F].face = n_f
+        self.faces[RFace.D].face = n_d
+        self.faces[RFace.B].face = n_b
+        self.faces[RFace.L].face = n_l
+        self.faces[RFace.R].face = n_r
 
     def find_face(self, color: Union[RColor, str]) -> Union[RFace, str]:
         """
@@ -339,3 +379,7 @@ class Cube:
             self.faces[face].spacing = s
 
         self._spacing = s
+
+    @property
+    def is_solved(self):
+        return all(len(self.faces[face].color_count()) == 1 for face in self.faces)
