@@ -5,33 +5,6 @@ classes.
 """
 
 
-class RColor:
-    """
-    This class contains the 6 standard colors of a Rubik's cube.
-    There is also a dictionary for quick exception handling.
-    """
-    R = 'R'
-    G = 'G'
-    B = 'B'
-    W = 'W'
-    Y = 'Y'
-    O = 'O'
-
-    colors = {R: R,
-              G: G,
-              B: B,
-              W: W,
-              Y: Y,
-              O: O}
-
-    complements = {R: O,
-                   O: R,
-                   G: B,
-                   B: G,
-                   W: Y,
-                   Y: W}
-
-
 class RFace:
     """
     This class contains the 6 standard faces of a Rubik's cube.

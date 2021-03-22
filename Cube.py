@@ -3,15 +3,21 @@ from queue import Queue
 from typing import Dict, Union
 
 from CubeFace import CubeFace
-from Rubiks import RFace, RMid, RAxis, RColor
+from RColors import RColors, StandardRColors
+from Rubiks import RFace, RMid, RAxis
 
 
 class Cube:
-    def __init__(self, faces: Dict[Union[RFace, str], CubeFace], spacing: int = -1):
+    def __init__(self, faces: Dict[Union[RFace, str], CubeFace], spacing: int = -1,
+                 colors: RColors = StandardRColors()):
         if len(faces) != 6:
             raise ValueError("A valid cube requires 6 sides.")
         self.faces = faces
         self.spacing = spacing
+        self.colors = colors.colors
+        self.ring = colors.ring
+        self.complements = colors.complements
+        self.poles = colors.poles
 
     def rotate_up(self, r: int = 1) -> None:
         self._rotate_face(RFace.U, r)
@@ -90,12 +96,6 @@ class Cube:
         for i in range(n):
             print(f'{" " * (n * self.spacing + 2)}  ', end="")
             print(" ".join(f'{j:>{self.spacing}}' for j in self.faces[RFace.D].row(i)))
-        print()
-
-        # # back face
-        # for i in range(n):
-        #     print(f'{" " * (n * self.spacing + 2)}  ', end="")
-        #     print(" ".join(f'{j:>{self.spacing}}' for j in self.faces[RFace.B].row(i)))
 
     def __str__(self):
         res = []
@@ -164,57 +164,53 @@ class Cube:
                 r *= -1 if "'" in rotation else 1
                 rot_dict[rot](r)
 
-    def orientate(self, up: Union[RColor, str], front: Union[RColor, str]) -> None:
+    def orientate(self, up: str, front: str) -> None:
         """
         This method reorientates the perspective faces.
 
         :param up: face color to be up face
         :param front: face color to be the front face
+        :param ring: what ring to use
         :return: None
         """
-        ring = {RColor.R: RColor.B,
-                RColor.B: RColor.O,
-                RColor.O: RColor.G,
-                RColor.G: RColor.R}
-
         # find the faces and mark
         n_u = self.faces[self.find_face(up)].face
         n_f = self.faces[self.find_face(front)].face
-        n_d = self.faces[self.find_face(RColor.complements[up])].face
-        n_b = self.faces[self.find_face(RColor.complements[front])].face
+        n_d = self.faces[self.find_face(self.complements[up])].face
+        n_b = self.faces[self.find_face(self.complements[front])].face
 
         try:
-            if up in ring and front in ring:
+            if up in self.ring and front in self.ring:
                 # considers edge case where ring composes the up and front
-                if ring[up] == front:
-                    n_r = self.faces[self.find_face(RColor.W)].face
-                    n_l = self.faces[self.find_face(RColor.Y)].face
+                if self.ring[up] == front:
+                    n_r = self.faces[self.find_face(self.poles['U'])].face
+                    n_l = self.faces[self.find_face(self.poles['D'])].face
                 else:
-                    n_r = self.faces[self.find_face(RColor.Y)].face
-                    n_l = self.faces[self.find_face(RColor.W)].face
+                    n_r = self.faces[self.find_face(self.poles['D'])].face
+                    n_l = self.faces[self.find_face(self.poles['U'])].face
             else:
                 # whether the ring is upside or downside
-                if up in ring:
-                    if front == RColor.W:
-                        l = self.find_face(ring[up])
+                if up in self.ring:
+                    if front == self.poles['U']:
+                        l = self.find_face(self.ring[up])
                         n_l = self.faces[l].face
-                        r = self.find_face(RColor.complements[self.faces[l].color])
+                        r = self.find_face(self.complements[self.faces[l].color])
                         n_r = self.faces[r].face
                     else:
-                        r = self.find_face(ring[up])
+                        r = self.find_face(self.ring[up])
                         n_r = self.faces[r].face
-                        l = self.find_face(RColor.complements[self.faces[r].color])
+                        l = self.find_face(self.complements[self.faces[r].color])
                         n_l = self.faces[l].face
                 else:
-                    if up == RColor.W:
-                        r = self.find_face(ring[front])
+                    if up == self.poles['U']:
+                        r = self.find_face(self.ring[front])
                         n_r = self.faces[r].face
-                        l = self.find_face(RColor.complements[self.faces[r].color])
+                        l = self.find_face(self.complements[self.faces[r].color])
                         n_l = self.faces[l].face
                     else:
-                        l = self.find_face(ring[front])
+                        l = self.find_face(self.ring[front])
                         n_l = self.faces[l].face
-                        r = self.find_face(RColor.complements[self.faces[l].color])
+                        r = self.find_face(self.complements[self.faces[l].color])
                         n_r = self.faces[r].face
 
         except KeyError as ke:
@@ -227,7 +223,7 @@ class Cube:
         self.faces[RFace.L].face = n_l
         self.faces[RFace.R].face = n_r
 
-    def find_face(self, color: Union[RColor, str]) -> Union[RFace, str]:
+    def find_face(self, color: str) -> Union[RFace, str]:
         """
         This method returns the face orientation of a given color.
 
@@ -237,6 +233,7 @@ class Cube:
         for face in self.faces:
             if self.faces[face].color == color:
                 return face
+        raise ValueError(f"{color} not in cube.")
 
     def _rotate_mid(self, mid, r: int = 1) -> None:
         """
@@ -397,3 +394,31 @@ class Cube:
     @property
     def is_solved(self):
         return all(len(self.faces[face].color_count()) == 1 for face in self.faces)
+
+    @property
+    def ubl(self):
+        res = []
+        o_d = self.orientation_dict
+        for face in ['U', 'R', 'F', 'D', 'L', 'B']:
+            for face_row in self.faces[face].face:
+                for cell in face_row:
+                    res.append("".join(o_d[cell]))
+
+        return "".join(res)
+
+    @property
+    def ubl_solved(self):
+        res = []
+        o_d = self.orientation_dict
+        for face in ['U', 'R', 'F', 'D', 'L', 'B']:
+            o = o_d[self.faces[face].color]
+            res.append("".join(f"{o}" for _ in range(9)))
+        return "".join(res)
+
+    @property
+    def orientation_dict(self) -> dict:
+        o_d = {}
+        for face in RFace.faces:
+            o_d[self.faces[face].color] = face
+
+        return o_d

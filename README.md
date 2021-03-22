@@ -20,3 +20,4 @@ be replaced with 'F' and RAxis.X can be replaced with 'X'. Additionally, RColor 
 To create an instance, a dictionary (RFace: CubeFace), containing the six faces, is expected.
 The purpose of the class is to perform standard Rubik's rotations.
 
+
