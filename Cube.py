@@ -393,10 +393,16 @@ class Cube:
 
     @property
     def is_solved(self):
+        """
+        :return: a boolean indicate if cube is solved
+        """
         return all(len(self.faces[face].color_count()) == 1 for face in self.faces)
 
     @property
     def ubl(self):
+        """
+        :return: a UBL string of the current cube state
+        """
         res = []
         o_d = self.orientation_dict
         for face in ['U', 'R', 'F', 'D', 'L', 'B']:
@@ -407,7 +413,10 @@ class Cube:
         return "".join(res)
 
     @property
-    def ubl_solved(self):
+    def ubl_solved(self) -> str:
+        """
+        :return: a UBL string that represents the solved cub
+        """
         res = []
         o_d = self.orientation_dict
         for face in ['U', 'R', 'F', 'D', 'L', 'B']:
@@ -417,6 +426,10 @@ class Cube:
 
     @property
     def orientation_dict(self) -> dict:
+        """
+        :return: a dictionary with keys being the color of each face
+        and values being the matching RFace.
+        """
         o_d = {}
         for face in RFace.faces:
             o_d[self.faces[face].color] = face
