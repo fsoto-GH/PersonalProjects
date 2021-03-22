@@ -54,6 +54,7 @@ class StandardFaced(Cube):
     This is a standard cube with 'stickers' being the letter
     of the face they belong to.
     """
+
     def __init__(self):
         u = CubeFace([f'{RFace.U}' for _ in range(1, 10)])
         f = CubeFace([f'{RFace.F}' for _ in range(10, 19)])
@@ -92,6 +93,3 @@ class StandardFaced(Cube):
                           RFace.B: b,
                           RFace.L: l,
                           RFace.R: r}, spacing=2, colors=colors)
-
-    # def orientate(self, up: str, front: str) -> None:
-    #     super().__init__()
