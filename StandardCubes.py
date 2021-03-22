@@ -28,7 +28,8 @@ class StandardCube(Cube):
 class NumberedCube(Cube):
     """
     This is a standard, solved cube numbered 1-54.
-    The order of numbers goes across from U-F-D-B-L-R.
+    The order of numbers goes across from U-L-F-R-B-D.
+    This should only be used for testing and not for actual solving.
     """
 
     def __init__(self):
