@@ -382,9 +382,10 @@ class Cube:
         if s < 0 or type(s) != int:
             s = 1
             for face in self.faces:
-                for cell in self.faces[face].face:
-                    n_s = len(str(cell))
-                    s = s if s > n_s else n_s
+                for face_row in self.faces[face].face:
+                    for cell in face_row:
+                        n_s = len(str(cell))
+                        s = s if s > n_s else n_s
 
         for face in self.faces:
             self.faces[face].spacing = s
@@ -435,3 +436,58 @@ class Cube:
             o_d[self.faces[face].color] = face
 
         return o_d
+
+    def get_edges(self, color):
+        edges = list()
+
+        up_down = [(0, 1), (1, 0), (2, 1), (1, 2)]
+        order = [RFace.B, RFace.L, RFace.F, RFace.R]
+        # up edges
+        for i in range(4):
+            u_c = self.faces[RFace.U].color_at(up_down[i][0], up_down[i][1])
+            o_c = self.faces[order[i]].color_at(0, 1)
+
+            if u_c == color or o_c == color:
+                if u_c == color:
+                    edges.append(((RFace.U, order[i]), up_down[i], (u_c, o_c)))
+
+                if o_c == color:
+                    edges.append(((order[i], RFace.U), up_down[i], (u_c, o_c)))
+
+        order = [RFace.F, RFace.L, RFace.B, RFace.R]
+        for i in range(4):
+            d_c = self.faces[RFace.D].color_at(up_down[i][0], up_down[i][1])
+            o_c = self.faces[order[i]].color_at(2, 1)
+
+            if d_c == color or o_c == color:
+                if d_c == color:
+                    edges.append(((RFace.D, order[i]), up_down[i], (d_c, o_c)))
+
+                if o_c == color:
+                    edges.append(((order[i], RFace.D), up_down[i], (d_c, o_c)))
+
+        order = [(RFace.F, RFace.L), (RFace.B, RFace.R)]
+        for i in range(2):
+            f_color = self.faces[order[i][0]].color_at(1, 0)
+            o_color = self.faces[order[i][1]].color_at(1, 2)
+
+            if f_color == color or o_color == color:
+                if f_color == color:
+                    edges.append((order[i], (1, 0), (f_color, o_color)))
+
+                if o_color == color:
+                    edges.append((order[i][::-1], RFace.D, (1, 2), (f_color, o_color)))
+
+        order = [(RFace.B, RFace.L), (RFace.F, RFace.R)]
+        for i in range(2):
+            f_color = self.faces[order[i][0]].color_at(1, 2)
+            o_color = self.faces[order[i][1]].color_at(1, 0)
+
+            if f_color == color or o_color == color:
+                if f_color == color:
+                    edges.append((order[i], (1, 2), (f_color, o_color)))
+
+                if o_color == color:
+                    edges.append((order[i][::-1], (1, 0), (f_color, o_color)))
+
+        return edges

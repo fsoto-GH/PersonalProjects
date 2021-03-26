@@ -31,6 +31,29 @@ class CubeFace:
         else:
             raise ValueError("Expected a list size 9 or 2d 3x3 list.")
 
+    def find_color(self, color: str, center: bool = False) -> List[tuple]:
+        """
+        Looks for a particular color in the face.
+
+        :param color: color to look for
+        :param center: whether the center should be considered
+        :return:
+        """
+
+        coords = []
+        for i, face_row in enumerate(self.face):
+            for j, cell in enumerate(face_row):
+                if cell == color:
+                    if not center and i == j:
+                        continue
+
+                    coords.append((i, j))
+
+        return coords
+
+    def color_at(self, r: int, c: int) -> str:
+        return self.face[r][c]
+
     @property
     def color(self) -> str:
         return self._color
@@ -100,3 +123,4 @@ class CubeFace:
             res.append("\n")
 
         return "".join(res)
+
