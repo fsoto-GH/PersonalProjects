@@ -1,3 +1,6 @@
+import re
+
+
 def fp_bin_dict(d):
     return fp_bin(f"{d['exp_sign']}{d['mantissa_sign']}{d['exp_bits']}{d['mantissa_bits']}",
                   exp_sign=0,
@@ -6,11 +9,11 @@ def fp_bin_dict(d):
                   mantissa_bits=(2 + len(d['exp_bits']), 2 + len(d['exp_bits']) + len(d['mantissa_bits'])))
 
 
-def fp_bin(s, exp_sign, exp_bits, mantissa_sign, mantissa_bits):
+def fp_bin(word, exp_sign, exp_bits, mantissa_sign, mantissa_bits):
     """
     This method converts a floating-point representation into something understandable.
 
-    :param str s: floating-point string representation
+    :param str word: floating-point string representation
     :param int exp_sign: bit index for exponent sign
     :param tuple exp_bits: bit index range which represent the exponent magnitude
     :param int mantissa_sign: bit index for mantissa sign
@@ -20,15 +23,18 @@ def fp_bin(s, exp_sign, exp_bits, mantissa_sign, mantissa_bits):
              exponent sign, exponent binary, mantissa sign, mantissa binary, decimal value
     :rtype: dict
     """
+    pattern = re.compile(r"^[01]+$")
+    if not pattern.match(word):
+        raise ValueError("Word must be composed of 0's and 1's.")
 
-    e_sign = s[exp_sign]
-    m_sign = s[mantissa_sign]
+    e_sign = word[exp_sign]
+    m_sign = word[mantissa_sign]
 
-    e_bits = s[exp_bits[0]: exp_bits[1]]
-    m_bits = s[mantissa_bits[0]: mantissa_bits[1]]
+    e_bits = word[exp_bits[0]: exp_bits[1]]
+    m_bits = word[mantissa_bits[0]: mantissa_bits[1]]
 
     if e_sign == '1':
-        binary = f".{'0'*(bin_val(e_bits) - 1)}1{s[mantissa_bits[0]: mantissa_bits[1]]}"
+        binary = f".{'0'*(bin_val(e_bits) - 1)}1{word[mantissa_bits[0]: mantissa_bits[1]]}"
     else:
         e_dec = bin_val(e_bits)
         binary = f"1{m_bits[0: e_dec]}.{m_bits[e_dec:]}"
