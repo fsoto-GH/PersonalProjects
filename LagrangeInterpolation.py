@@ -80,10 +80,13 @@ def number_sign(exprs):
 
 if __name__ == '__main__':
     points = [(2, 1), (3, 2), (-1, 3), (4, 4), (7, 5), (10, 22), (17, -10), (19, -1), (24, -1), (50, 0)]
-    print(lagrange_interpolation_latex(points))
-    # print(lagrange_interpolation_latex(points))
-    # print(lagrange_interpolation_str(points))
+    print(f"P(x)={lagrange_interpolation_latex(points)}")
+    print('-' * 20)
+
+    print(f"P(x)={lagrange_interpolation_str(points)}")
+    print('-' * 20)
 
     p = lagrange_interpolation_funct(points)
-    print(p(1))
+    x = 1
+    print(f"P({x})={p(x)}")
 
