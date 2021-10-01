@@ -1,9 +1,11 @@
-def newton_method(f, f_p, x_0, t=10**-4, i=1_000):
+def newton_method(f, f_p, x_0, t=10**-4, max_iters=1_000):
     x_n = x_0
-    c = 0
+    c = 1
 
     iters = {c: x_n}
     while not(f(x_n) == 0 or -t <= f(x_n) <= t):
+        if f_p(x_n) == 0:
+            break
         x_n = x_n - f(x_n) / f_p(x_n)
         c += 1
         iters[c] = x_n

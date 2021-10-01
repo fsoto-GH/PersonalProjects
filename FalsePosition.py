@@ -1,4 +1,4 @@
-def false_position(f, a, b, t=10**-4, i=1_000):
+def false_position(f, a, b, t=10**-4, max_iters=1_000):
     if a >= b:
         raise ValueError(f"{a} < {b} is not valid.")
 
@@ -8,7 +8,9 @@ def false_position(f, a, b, t=10**-4, i=1_000):
     iters[c] = {'L': a,
                 'U': b,
                 'M': m}
-    while not(f(m) == 0 or -t <= f(m) <= t) and c != i:
+    while not(f(m) == 0 or -t <= f(m) <= t) and c != max_iters:
+        if f(m) == 0:
+            break
         if f(a)*f(m) < 0:
             b = m
         elif f(m)*f(b) < 0:
